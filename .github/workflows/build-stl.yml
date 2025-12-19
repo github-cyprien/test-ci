@@ -35,4 +35,4 @@ jobs:
           python-version: '3.10'
 
       - name: Generate STL Files
-        run: python3 generate_parts.py main   # ← doit exister à la racine !
+        run: python3 generate-parts.py main   # ← doit exister à la racine !
