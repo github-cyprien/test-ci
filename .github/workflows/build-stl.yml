@@ -9,30 +9,26 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
-    container: debian:bookworm
+    # ou container: debian:bookworm — ça marche aussi
 
     steps:
-      - name: Install dependencies
-        run: |
-          apt update
-          apt install -y git python3 python3-pip openscad zip
-
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Generate STL files
-        run: |
-          python3 generate_parts.py main
+      - name: List files (debug temporaire)
+        run: ls -la
 
-      - name: Zip STLs
+      - name: Install OpenSCAD (AppImage)
         run: |
-          zip -r stl.zip extensions/
+          wget -O openscad.AppImage https://files.openscad.org/OpenSCAD-2021.01-x86_64.AppImage
+          chmod +x openscad.AppImage
+          sudo mv openscad.AppImage /usr/local/bin/openscad
+          sudo apt update && sudo apt install -y libgl1
 
-      - name: Upload to Release
-        uses: softprops/action-gh-release@v2
+      - name: Set up Python
+        uses: actions/setup-python@v5
         with:
-          files: |
-            extensions/*.stl
-            stl.zip
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          python-version: '3.10'
+
+      - name: Generate STL Files
+        run: python3 generate_parts.py main   # ← doit exister à la racine !
