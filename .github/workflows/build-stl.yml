@@ -13,11 +13,17 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Install OpenSCAD
+      - name: Install OpenSCAD (AppImage)
         run: |
-          sudo add-apt-repository -y ppa:openscad/releases
+          wget -O openscad.AppImage https://files.openscad.org/OpenSCAD-2021.01-x86_64.AppImage
+          chmod +x openscad.AppImage
+          sudo mv openscad.AppImage /usr/local/bin/openscad
+
+      - name: Install dependencies for AppImage
+        run: |
           sudo apt update
-          sudo apt install -y openscad
+          sudo apt install -y libgl1 libxcursor1 libxi6 libxt6 libxrandr2 libxinerama1 libxss1
+
 
       - name: Set up Python
         uses: actions/setup-python@v5
