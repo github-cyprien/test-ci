@@ -318,18 +318,18 @@ with open('extensions.csv', newline='') as csvExtensions:
                     #preview = preview.replace("electronic", "electronic/preview", 1) 
                     file.write(preview + "\n")                    
 
-        if "import-parts" in rowCategories['Name'] and (PartType == "" or PartType == "import-parts"):
-            with open(rowCategories['csv_file'], newline='') as csvfile:
+        if "import-parts" in rowExtensions['Name'] and (PartType == "" or PartType == "import-parts"):
+            with open(rowExtensions['csv_file'], newline='') as csvfile:
                 #Read csv file
                 dialect = csv.Sniffer().sniff(csvfile.read(2048), delimiters=";")   
                 csvfile.seek(0)
                 reader = csv.DictReader(csvfile, dialect=dialect)
 
                 for row in reader:
-                    if not os.path.exists(rowCategories['stl_directory'] + '/' + row['Directory']):
-                        os.makedirs(rowCategories['stl_directory'] + '/' + row['Directory'])                    
+                    if not os.path.exists(rowExtensions['stl_directory'] + '/' + row['Directory']):
+                        os.makedirs(rowExtensions['stl_directory'] + '/' + row['Directory'])                    
                     # Generate STL
-                    stl = "openscad -o " + rowCategories['stl_directory'] + '/' + row['Directory'] + '/' + row['Filename'] + " " + rowCategories['scad_file']
+                    stl = "openscad -o " + rowExtensions['stl_directory'] + '/' + row['Directory'] + '/' + row['Filename'] + " " + rowExtensions['scad_file']
                     stl += " -D model=" + quote + row['Model'] + quote
                     stl += " -D filename=" + quote + row['STL_source'] + quote
                     stl += " -D holeArray=[" + row['holeArray'] + "]"
