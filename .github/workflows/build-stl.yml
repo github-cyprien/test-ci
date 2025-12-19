@@ -4,6 +4,7 @@ on:
   release:
     types: [published]  # ou 'created' si tu veux aussi sur draft
   # optionnel : workflow_dispatch pour lancer manuellement
+    workflow_dispatch:  # 👈 Ajoute cette ligne
 
 jobs:
   build:
