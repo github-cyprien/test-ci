@@ -1,0 +1,11 @@
+Name;scad_file;csv_file;stl_directory
+main;clip_and_block.scad;main.csv;./extensions/main
+clips;clip.scad;clips.csv;./extensions/main/clips
+lockers;locker.scad;lockers.csv;./extensions/main/clips
+twist;clip_and_block.scad;twist.csv;./extensions/twist
+tech;tech.scad;tech.csv;./extensions/tech
+breakout-boards;breakout-boards.scad;breakout-boards.csv;./extensions/breakout-boards
+gears;gears_helical.scad;gears.csv;./extensions/gears
+springs;clip_and_block.scad;springs.csv;./extensions/springs
+plates;clip_and_block.scad;plates.csv;./extensions/plates
+screw-nut;screw-nut.scad;screw-nut.csv;./extensions/screw-nut

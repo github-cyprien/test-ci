@@ -1,0 +1,43 @@
+name: Build and Upload STLs
+
+on:
+  release:
+    types: [published]  # ou 'created' si tu veux aussi sur draft
+  # optionnel : workflow_dispatch pour lancer manuellement
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Install OpenSCAD
+        run: |
+          sudo add-apt-repository -y ppa:openscad/releases
+          sudo apt update
+          sudo apt install -y openscad
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.10'
+
+      - name: Generate STL files
+        run: |
+          python generate_parts.py main  # ton script qui lit les CSV et lance openscad
+          # Assure-toi qu'il génère tous les .stl dans un dossier, ex: ./output/
+
+      - name: Zip all STLs (optionnel mais recommandé)
+        run: |
+          zip -r stl.zip extensions/
+
+      - name: Upload STLs to Release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: |
+            extensions/*.stl
+            stl.zip
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
