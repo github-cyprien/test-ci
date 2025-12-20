@@ -5,6 +5,9 @@ on:
     types: [published]
   workflow_dispatch:  # pour tester manuellement
 
+permissions:
+  contents: write
+
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -13,12 +16,11 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Install OpenSCAD (AppImage)
+      - name: Install OpenSCAD
         run: |
-          wget -O openscad.AppImage https://files.openscad.org/OpenSCAD-2021.01-x86_64.AppImage
-          chmod +x openscad.AppImage
-          sudo mv openscad.AppImage /usr/local/bin/openscad
-          sudo apt update && sudo apt install -y libgl1
+          sudo add-apt-repository ppa:openscad/releases -y
+          sudo apt update
+          sudo apt install -y openscad
 
       - name: Set up Python
         uses: actions/setup-python@v5
@@ -55,8 +57,7 @@ jobs:
           files: |
             extensions/*.stl
             stl.zip
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
 
       - name: Upload as artifact (only for manual runs)
         if: github.event_name == 'workflow_dispatch'
