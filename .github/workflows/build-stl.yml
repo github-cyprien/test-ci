@@ -3,29 +3,24 @@ name: Build and Upload STLs
 on:
   release:
     types: [published]
-  workflow_dispatch:  # pour tester manuellement
-
-permissions:
-  contents: write
+  workflow_dispatch:
 
 jobs:
   build:
     runs-on: ubuntu-latest
+    # On définit l'image Debian officielle comme environnement de travail
+    container:
+      image: debian:bookworm 
 
     steps:
+      - name: Install dependencies
+        run: |
+          apt update
+          # On installe les outils de base, Python, OpenSCAD et Zip
+          apt install -y openscad python3 python3-pip zip wget git
+
       - name: Checkout code
         uses: actions/checkout@v4
-
-      - name: Install OpenSCAD
-        run: |
-          sudo add-apt-repository ppa:openscad/releases -y
-          sudo apt update
-          sudo apt install -y openscad
-
-      - name: Set up Python
-        uses: actions/setup-python@v5
-        with:
-          python-version: '3.10'
 
       - name: Generate STL Files
         run: python3 generate-parts.py main
@@ -36,30 +31,22 @@ jobs:
             echo "ERREUR: le dossier 'extensions' n'existe pas !"
             exit 1
           fi
-          if [ -z "$(ls -A extensions/)" ]; then
-            echo "ERREUR: le dossier 'extensions' est vide !"
-            exit 1
-          fi
           ls -la extensions/
 
       - name: Create ZIP
         run: zip -r stl.zip extensions/
 
-      - name: Verify ZIP and STLs exist
-        run: |
-          ls -la stl.zip
-          echo "Taille ZIP : $(stat -c%s stl.zip) octets"
-
-      - name: Upload to Release (only on release)
+      - name: Upload to Release
         if: github.event_name == 'release'
         uses: softprops/action-gh-release@v2
         with:
           files: |
             extensions/*.stl
             stl.zip
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-
-      - name: Upload as artifact (only for manual runs)
+      - name: Upload as artifact
         if: github.event_name == 'workflow_dispatch'
         uses: actions/upload-artifact@v4
         with:
